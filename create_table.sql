@@ -1,55 +1,127 @@
--- TODO: Fill in useful columns
-Create table flights (
-    id serial primary key,
-    flight_number varchar(10) not null,
-    arrival_airport varchar(3) not null constraint airports_fk references airports(airport_code),
-    departure_airport varchar(3) not null,
-    plane_type varchar(24) not null,
-    departure_time timestamp not null,
-    arrival_time timestamp not null,
-    departure_runway timestamp,
-    arrival_runway timestamp
+CREATE TABLE Movies (
+    id INT PRIMARY KEY,
+    title VARCHAR(255),
+    original_title VARCHAR(255),
+    imdb_id VARCHAR(20),
+    overview TEXT,
+    tagline VARCHAR(255),
+    release_date DATE,
+    runtime INT,
+    budget DECIMAL(15, 2),
+    revenue DECIMAL(15, 2),
+    adult BOOLEAN,
+    video BOOLEAN,
+    backdrop_path VARCHAR(255),
+    poster_path VARCHAR(255),
+    homepage VARCHAR(255),
+    status VARCHAR(50),
+    original_language VARCHAR(10)
 );
 
-CREATE table flight_data (
-    id serial primary key,
-    flight_number varchar(10) not null constraint flights_fk references flights(flight_number),
-    speed int not null,
-    heading int not null,
-    barometric_altitude int not null,
-    gps_altitude int not null,
-    latitude float not null,
-    longitude float not null,
-    time timestamp not null,
-    -- Unknown data types
-    wind VARCHAR(8),
-    temperature int
+CREATE TABLE Genres (
+    id INT PRIMARY KEY,
+    name VARCHAR(50)
 );
 
-CREATE table airports (
-    airport_code varchar(3) not null primary key,
-    airport_name varchar(100) not null,
-    city varchar(100) not null,
-    country varchar(100) not null,
-    latitude float not null,
-    longitude float not null
+CREATE TABLE ProductionCompanies (
+    id INT PRIMARY KEY,
+    name VARCHAR(255),
+    logo_path VARCHAR(255),
+    origin_country VARCHAR(5)
 );
 
-CREATE table runway (
-    id serial primary key,
-    airport_code varchar(3) not null constraint airports_fk references airports(airport_code),
-    runway_number varchar(10) not null,
-    runway_length int not null,
-    runway_width int not null
+CREATE TABLE ProductionCountries (
+    iso_3166_1 VARCHAR(5) PRIMARY KEY,
+    name VARCHAR(255)
 );
 
-CREATE table geofence (
-    id serial primary key,
-    airport_code varchar(3) not null constraint airports_fk references airports(airport_code),
-    label varchar(20) not null,
-    latitude_sw float not null,
-    longitude_sw float not null,
-    latitude_ne float not null,
-    longitude_ne float not null
+CREATE TABLE SpokenLanguages (
+    iso_639_1 VARCHAR(5) PRIMARY KEY,
+    name VARCHAR(255),
+    english_name VARCHAR(255)
 );
 
+CREATE TABLE MovieGenres (
+    movie_id INT,
+    genre_id INT,
+    PRIMARY KEY (movie_id, genre_id),
+    FOREIGN KEY (movie_id) REFERENCES Movies(id),
+    FOREIGN KEY (genre_id) REFERENCES Genres(id)
+);
+CREATE TABLE MovieProductionCompanies (
+    movie_id INT,
+    production_company_id INT,
+    PRIMARY KEY (movie_id, production_company_id),
+    FOREIGN KEY (movie_id) REFERENCES Movies(id),
+    FOREIGN KEY (production_company_id) REFERENCES ProductionCompanies(id)
+);
+
+CREATE TABLE MovieProductionCountries (
+    movie_id INT,
+    iso_3166_1 VARCHAR(5),
+    PRIMARY KEY (movie_id, iso_3166_1),
+    FOREIGN KEY (movie_id) REFERENCES Movies(id),
+    FOREIGN KEY (iso_3166_1) REFERENCES ProductionCountries(iso_3166_1)
+);
+
+CREATE TABLE MovieSpokenLanguages (
+    movie_id INT,
+    iso_639_1 VARCHAR(5),
+    PRIMARY KEY (movie_id, iso_639_1),
+    FOREIGN KEY (movie_id) REFERENCES Movies(id),
+    FOREIGN KEY (iso_639_1) REFERENCES SpokenLanguages(iso_639_1)
+);
+
+CREATE TABLE Changes (
+    movie_id INT,
+    datetime date,
+    datapoint VARCHAR(255),
+    PRIMARY KEY (movie_id, datetime, datapoint),
+    FOREIGN KEY (movie_id) REFERENCES Movies(id),
+    count INT
+);
+
+CREATE TABLE people (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    gender INTEGER,
+    known_for_department VARCHAR(50),
+    profile_path VARCHAR(255),
+    adult BOOLEAN
+);
+
+CREATE TABLE known_works (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER REFERENCES people(id),
+    adult BOOLEAN,
+    backdrop_path VARCHAR(255),
+    title VARCHAR(100),
+    original_language VARCHAR(10),
+    original_title VARCHAR(100),
+    overview TEXT,
+    poster_path VARCHAR(255),
+    media_type VARCHAR(50),
+    popularity NUMERIC(10,3),
+    release_date DATE,
+    video BOOLEAN,
+    vote_average NUMERIC(3,1),
+    vote_count INTEGER,
+    genre_ids INTEGER[]
+);
+
+CREATE TABLE movies_popularity (
+    id SERIAL PRIMARY KEY,
+    movie_id INTEGER REFERENCES movies(id),
+    popularity NUMERIC(10,3),
+    vote_average NUMERIC(3,1),
+    date DATE,
+    region VARCHAR(10)
+);
+
+CREATE TABLE people_popularity (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER REFERENCES people(id),
+    popularity NUMERIC(10,3),
+    vote_average NUMERIC(3,1),
+    date DATE
+);
