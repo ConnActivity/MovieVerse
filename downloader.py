@@ -3,10 +3,10 @@ import requests
 
 headers = {
     "accept": "application/json",
-    "Authorization": "Bearer eyTWRWR"
+    "Authorization": "Bearer "
 }
 
-api_key = "KEYYYYYY"
+api_key = ""
 tmdb = TMDb(key=api_key)
 
 
@@ -16,7 +16,7 @@ def get_popular_movies(page=1):
 
 
 def get_movie_details(movie_id):
-    movie = tmdb.movie(movie_id)
+    movie = tmdb.movie(movie_id).details()
     return movie
 
 
@@ -62,8 +62,8 @@ def get_upcoming_movies(page=1):
     return movies
 
 
-def get_changes_for_all_movies():
-    changed_movies = get_movie_change_list()
+def get_changes_for_all_movies(page=1):
+    changed_movies = get_movie_change_list(page)
     for movie in changed_movies:
         movie_id = movie["id"]
         changes = get_movie_changes(movie_id)
@@ -84,5 +84,4 @@ def get_movie_changes(movie_id):
         changes[change["key"]] = len(change["key"])
 
     return changes
-
 
