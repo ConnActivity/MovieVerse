@@ -1,55 +1,41 @@
--- TODO: Fill in useful columns
-Create table flights (
-    id serial primary key,
-    flight_number varchar(10) not null,
-    arrival_airport varchar(3) not null constraint airports_fk references airports(airport_code),
-    departure_airport varchar(3) not null,
-    plane_type varchar(24) not null,
-    departure_time timestamp not null,
-    arrival_time timestamp not null,
-    departure_runway timestamp,
-    arrival_runway timestamp
+CREATE TABLE movies (
+    id SERIAL PRIMARY KEY,
+    original_language VARCHAR(10),
+    original_title VARCHAR(100),
+    overview TEXT,
+    popularity NUMERIC(10,3),
+    poster_path VARCHAR(255),
+    release_date DATE,
+    title VARCHAR(100),
+    video BOOLEAN,
+    vote_average NUMERIC(3,1),
+    vote_count INTEGER
+);
+CREATE TABLE people (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    gender INTEGER,
+    known_for_department VARCHAR(50),
+    popularity NUMERIC(10,3),
+    profile_path VARCHAR(255),
+    adult BOOLEAN
 );
 
-CREATE table flight_data (
-    id serial primary key,
-    flight_number varchar(10) not null constraint flights_fk references flights(flight_number),
-    speed int not null,
-    heading int not null,
-    barometric_altitude int not null,
-    gps_altitude int not null,
-    latitude float not null,
-    longitude float not null,
-    time timestamp not null,
-    -- Unknown data types
-    wind VARCHAR(8),
-    temperature int
+CREATE TABLE known_works (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER REFERENCES people(id),
+    adult BOOLEAN,
+    backdrop_path VARCHAR(255),
+    title VARCHAR(100),
+    original_language VARCHAR(10),
+    original_title VARCHAR(100),
+    overview TEXT,
+    poster_path VARCHAR(255),
+    media_type VARCHAR(50),
+    popularity NUMERIC(10,3),
+    release_date DATE,
+    video BOOLEAN,
+    vote_average NUMERIC(3,1),
+    vote_count INTEGER,
+    genre_ids INTEGER[]
 );
-
-CREATE table airports (
-    airport_code varchar(3) not null primary key,
-    airport_name varchar(100) not null,
-    city varchar(100) not null,
-    country varchar(100) not null,
-    latitude float not null,
-    longitude float not null
-);
-
-CREATE table runway (
-    id serial primary key,
-    airport_code varchar(3) not null constraint airports_fk references airports(airport_code),
-    runway_number varchar(10) not null,
-    runway_length int not null,
-    runway_width int not null
-);
-
-CREATE table geofence (
-    id serial primary key,
-    airport_code varchar(3) not null constraint airports_fk references airports(airport_code),
-    label varchar(20) not null,
-    latitude_sw float not null,
-    longitude_sw float not null,
-    latitude_ne float not null,
-    longitude_ne float not null
-);
-
