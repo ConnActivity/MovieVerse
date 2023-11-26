@@ -6,7 +6,7 @@ headers = {
     "Authorization": "Bearer eyTWRWR"
 }
 
-api_key = "24e54f2669a3b126d099554db0d4da51"
+api_key = "KEYY!!!"
 tmdb = TMDb(key=api_key)
 
 
