@@ -1,0 +1,2 @@
+requests~=2.31.0
+themoviedb~=0.4.0
