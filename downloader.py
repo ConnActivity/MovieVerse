@@ -3,7 +3,7 @@ import requests
 
 headers = {
     "accept": "application/json",
-    "Authorization": "Bearer eyTWRWR"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNGU1NGYyNjY5YTNiMTI2ZDA5OTU1NGRiMGQ0ZGE1MSIsInN1YiI6IjY1NjM1NGNjYTZjMTA0MDBmZWIxNWJmNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Io9MSQ3ttZrYo2XpiHSWQ8KK4aqCFGTSiTUnTsqCkgQ "
 }
 
 api_key = "24e54f2669a3b126d099554db0d4da51"
@@ -16,7 +16,7 @@ def get_popular_movies(page=1):
 
 
 def get_movie_details(movie_id):
-    movie = tmdb.movie(movie_id)
+    movie = tmdb.movie(movie_id).details()
     return movie
 
 
@@ -62,8 +62,8 @@ def get_upcoming_movies(page=1):
     return movies
 
 
-def get_changes_for_all_movies():
-    changed_movies = get_movie_change_list()
+def get_changes_for_all_movies(page=1):
+    changed_movies = get_movie_change_list(page)
     for movie in changed_movies:
         movie_id = movie["id"]
         changes = get_movie_changes(movie_id)

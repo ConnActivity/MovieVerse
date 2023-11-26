@@ -1,11 +1,12 @@
 import datetime
 
-from postgres import Postgres
-from themoviedb.schemas import Movie, Person, Genre, Region, Company
+import psycopg2
+from themoviedb.schemas import Movie, Person, Genre, Company
+from themoviedb.schemas.countries import Country
 from themoviedb.schemas.languages import Language
 
-url = f"postgresql://postgres:postgres@SERVER_DOMAIN:5333/movie_db"
-conn = Postgres(url).get_connection()
+url = f"postgresql://postgres:postgres@49.13.1.33:5333/movie_db"
+conn = psycopg2.connect(url)
 cursor = conn.cursor()
 
 
@@ -25,26 +26,43 @@ def insert_movie(movie: Movie):
     cursor.execute(sql, movie_data)
     conn.commit()
 
+    insert_movie_popularity(movie.id, movie.popularity, movie.vote_average)
+    for genre in movie.genres:
+        insert_genre(genre)
+        insert_movie_genres(movie.id, genre.id)
 
-def insert_movie_popularity(movie_id: int, popularity: float, vote_average: float, region: str):
+    for company in movie.production_companies:
+        insert_production_company(company)
+        insert_movie_production_companies(movie.id, company.id)
+
+    for country in movie.production_countries:
+        insert_country(country)
+        insert_movie_production_countries(movie.id, country.iso_3166_1)
+
+    for language in movie.spoken_languages:
+        insert_spoken_language(language)
+        insert_movie_spoken_languages(movie.id, language.iso_639_1)
+
+
+def insert_movie_popularity(movie_id: int, popularity: float, vote_average: float):
     sql = """INSERT INTO movies_popularity 
-            (movie_id, popularity, vote_average, date, region) 
+            (movie_id, popularity, vote_average, date) 
             VALUES 
-            (%s, %s, %s, %s, %s)"""
+            (%s, %s, %s, %s) ON CONFLICT (movie_id, date) DO NOTHING"""
 
-    movie_popularity_data = (movie_id, popularity, vote_average, datetime.date.today(), region)
+    movie_popularity_data = (movie_id, popularity, vote_average, datetime.date.today())
 
     cursor.execute(sql, movie_popularity_data)
     conn.commit()
 
 
-def insert_movie_change(movie_id: int, date: datetime.date, datapoint: str, count: int):
+def insert_movie_change(movie_id: int, datapoint: str, count: int):
     sql = """INSERT INTO changes 
             (movie_id, datetime, datapoint, count)
             VALUES 
-            (%s, %s, %s)"""
+            (%s, %s, %s, %s) ON CONFLICT (movie_id, datetime, datapoint) DO NOTHING"""
 
-    movie_change_data = (movie_id, date, datapoint, count)
+    movie_change_data = (movie_id, datetime.date.today(), datapoint, count)
 
     cursor.execute(sql, movie_change_data)
     conn.commit()
@@ -66,7 +84,7 @@ def insert_movie_genres(movie_id: int, genre_id: int):
     sql = """INSERT INTO moviegenres 
             (movie_id, genre_id) 
             VALUES 
-            (%s, %s)"""
+            (%s, %s) ON CONFLICT (movie_id, genre_id) DO NOTHING"""
 
     movie_genre_data = (movie_id, genre_id)
 
@@ -90,7 +108,7 @@ def insert_movie_production_companies(movie_id: int, production_company_id: int)
     sql = """INSERT INTO movieproductioncompanies 
             (movie_id, production_company_id) 
             VALUES 
-            (%s, %s)"""
+            (%s, %s) ON CONFLICT (movie_id, production_company_id) DO NOTHING"""
 
     movie_production_company_data = (movie_id, production_company_id)
 
@@ -98,13 +116,13 @@ def insert_movie_production_companies(movie_id: int, production_company_id: int)
     conn.commit()
 
 
-def insert_country(region: Region):
+def insert_country(region: Country):
     sql = """INSERT INTO productioncountries 
             (iso_3166_1, name) 
             VALUES 
             (%s, %s) ON CONFLICT (iso_3166_1) DO NOTHING"""
 
-    region_data = (region.iso_3166_1, region.english_name)
+    region_data = (region.iso_3166_1, region.name)
 
     cursor.execute(sql, region_data)
     conn.commit()
@@ -115,7 +133,7 @@ def insert_movie_production_countries(movie_id: int, country_code: str):
     sql = """INSERT INTO movieproductioncountries 
             (movie_id, iso_3166_1) 
             VALUES 
-            (%s, %s)"""
+            (%s, %s) ON CONFLICT (movie_id, iso_3166_1) DO NOTHING"""
 
     movie_production_country_data = (movie_id, country_code)
 
@@ -140,7 +158,7 @@ def insert_movie_spoken_languages(movie_id: int, language_code: str):
     sql = """INSERT INTO moviespokenlanguages 
             (movie_id, iso_639_1) 
             VALUES 
-            (%s, %s)"""
+            (%s, %s) ON CONFLICT (movie_id, iso_639_1) DO NOTHING"""
 
     movie_spoken_language_data = (movie_id, language_code)
 
@@ -165,7 +183,7 @@ def insert_person_popularity(person_id: int, popularity: float):
     sql = """INSERT INTO people_popularity 
             (person_id, popularity, date) 
             VALUES 
-            (%s, %s, %s)"""
+            (%s, %s, %s) ON CONFLICT (person_id, date) DO NOTHING"""
 
     person_popularity_data = (person_id, popularity, datetime.date.today())
 
