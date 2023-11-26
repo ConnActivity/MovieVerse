@@ -39,3 +39,20 @@ CREATE TABLE known_works (
     vote_count INTEGER,
     genre_ids INTEGER[]
 );
+
+CREATE TABLE movies_popularity (
+    id SERIAL PRIMARY KEY,
+    movie_id INTEGER REFERENCES movies(id),
+    popularity NUMERIC(10,3),
+    vote_average NUMERIC(3,1),
+    date DATE,
+    region VARCHAR(10)
+);
+
+CREATE TABLE people_popularity (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER REFERENCES people(id),
+    popularity NUMERIC(10,3),
+    vote_average NUMERIC(3,1),
+    date DATE
+);
