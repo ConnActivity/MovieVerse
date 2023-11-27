@@ -1,3 +1,5 @@
+import datetime
+
 from themoviedb import TMDb
 import requests
 
@@ -31,7 +33,7 @@ def get_alternative_titles(movie_id):
 
 
 def get_movie_change_list(page=1):
-    url = f"https://api.themoviedb.org/3/movie/changes?page={page}"
+    url = f"https://api.themoviedb.org/3/movie/changes?page={page}&start_date={datetime.date.today() - datetime.timedelta(days=1)}&end_date={datetime.date.today()}"
     response = requests.get(url, headers=headers).json()
     response = response["results"]
     return response
