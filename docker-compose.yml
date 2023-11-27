@@ -13,6 +13,7 @@ services:
     # Initialize the database using create_table.sql
     volumes:
       - ./create_table.sql:/docker-entrypoint-initdb.d/create_table.sql
+      - ./db-data:/var/lib/postgresql/data
     restart: unless-stopped
   scraper:
     build: .
