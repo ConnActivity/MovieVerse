@@ -115,7 +115,7 @@ CREATE TABLE movies_popularity (
     popularity NUMERIC(10,3),
     vote_average NUMERIC(3,1),
     date DATE,
-    region VARCHAR(10)
+    CONSTRAINT movies_popularity_movie_id_date_key UNIQUE (movie_id, date)
 );
 
 CREATE TABLE people_popularity (

@@ -1,12 +1,14 @@
+import datetime
+
 from themoviedb import TMDb
 import requests
 
 headers = {
     "accept": "application/json",
-    "Authorization": "Bearer eyTWRWR"
+    "Authorization": "Bearer TOKEN "
 }
 
-api_key = "KEYYYYYY"
+api_key = "KEY"
 tmdb = TMDb(key=api_key)
 
 
@@ -16,7 +18,7 @@ def get_popular_movies(page=1):
 
 
 def get_movie_details(movie_id):
-    movie = tmdb.movie(movie_id)
+    movie = tmdb.movie(movie_id).details()
     return movie
 
 
@@ -31,7 +33,7 @@ def get_alternative_titles(movie_id):
 
 
 def get_movie_change_list(page=1):
-    url = f"https://api.themoviedb.org/3/movie/changes?page={page}"
+    url = f"https://api.themoviedb.org/3/movie/changes?page={page}&start_date={datetime.date.today() - datetime.timedelta(days=1)}&end_date={datetime.date.today()}"
     response = requests.get(url, headers=headers).json()
     response = response["results"]
     return response
@@ -62,8 +64,8 @@ def get_upcoming_movies(page=1):
     return movies
 
 
-def get_changes_for_all_movies():
-    changed_movies = get_movie_change_list()
+def get_changes_for_all_movies(page=1):
+    changed_movies = get_movie_change_list(page)
     for movie in changed_movies:
         movie_id = movie["id"]
         changes = get_movie_changes(movie_id)
@@ -84,5 +86,4 @@ def get_movie_changes(movie_id):
         changes[change["key"]] = len(change["key"])
 
     return changes
-
 
