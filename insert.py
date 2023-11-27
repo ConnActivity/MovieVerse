@@ -5,7 +5,7 @@ from themoviedb.schemas import Movie, Person, Genre, Company
 from themoviedb.schemas.countries import Country
 from themoviedb.schemas.languages import Language
 
-url = f"postgresql://postgres:postgres@SERVER_DOMAIN:5333/movie_db"
+url = f"postgresql://postgres:postgres@db:5432/movie_db"
 conn = psycopg2.connect(url)
 cursor = conn.cursor()
 
