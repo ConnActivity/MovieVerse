@@ -10,4 +10,17 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: movie_db
+    # Initialize the database using create_table.sql
+    volumes:
+      - ./create_table.sql:/docker-entrypoint-initdb.d/create_table.sql
+    restart: unless-stopped
+  scraper:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: movie_db
     restart: unless-stopped
