@@ -1,2 +1,9 @@
-postgres==4.0
 themoviedb==0.4.0
+psycopg2-binary==2.9.9
+plotly
+seaborn
+matplotlib
+gensim
+nltk
+wordcloud
+scikit-learn
