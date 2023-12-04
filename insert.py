@@ -1,4 +1,5 @@
 import datetime
+from typing import List, NamedTuple, Tuple
 
 import psycopg2
 from themoviedb.schemas import Movie, Person, Genre, Company
@@ -6,30 +7,46 @@ from themoviedb.schemas.countries import Country
 from themoviedb.schemas.languages import Language
 
 url = f"postgresql://postgres:postgres@49.13.1.33:5333/movie_db"
+
+class MoviePopularity(NamedTuple):
+    movie_id: int
+    popularity: float
+    vote_average: float
+
+
+class MovieChange(NamedTuple):
+    movie_id: int
+    datapoint: str
+    count: int
+
+
+class MovieGenre(NamedTuple):
+    movie_id: int
+    genre_id: int
+
+
 conn = psycopg2.connect(url)
 cursor = conn.cursor()
 
 
-def insert_movie(movie: Movie):
+def insert_movie(movies: List[Movie]):
     sql = """INSERT INTO movies 
             (id, title, original_title, imdb_id, overview, tagline, release_date, runtime, budget, 
             revenue, adult, video, backdrop_path, poster_path, homepage, status, original_language) 
             VALUES 
             (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING"""
 
-    movie_data = (
-        movie.id, movie.title, movie.original_title, movie.imdb_id, movie.overview, movie.tagline,
-        movie.release_date, movie.runtime, movie.budget, movie.revenue, movie.adult, movie.video,
-        movie.backdrop_path, movie.poster_path, movie.homepage, movie.status, movie.original_language
-    )
+    movies_data = [(movie.id, movie.title, movie.original_title, movie.imdb_id, movie.overview, movie.tagline,
+                    movie.release_date, movie.runtime, movie.budget, movie.revenue, movie.adult, movie.video,
+                    movie.backdrop_path, movie.poster_path, movie.homepage, movie.status, movie.original_language)
+                   for movie in movies]
 
-    cursor.execute(sql, movie_data)
+    cursor.executemany(sql, movies_data)
     conn.commit()
 
-    insert_movie_popularity(movie.id, movie.popularity, movie.vote_average)
-    for genre in movie.genres:
-        insert_genre(genre)
-        insert_movie_genres(movie.id, genre.id)
+    insert_movie_popularity([MoviePopularity(movie.id, movie.popularity, movie.vote_average) for movie in movies])
+    insert_genre([genre for movie in movies for genre in movie.genres])
+    insert_movie_genres([(movie.id, genre.id) for movie in movies for genre in movie.genres])
 
     for company in movie.production_companies:
         insert_production_company(company)
@@ -44,15 +61,17 @@ def insert_movie(movie: Movie):
         insert_movie_spoken_languages(movie.id, language.iso_639_1)
 
 
-def insert_movie_popularity(movie_id: int, popularity: float, vote_average: float):
+def insert_movie_popularity(popularity_data: List[MoviePopularity]):
     sql = """INSERT INTO movies_popularity 
             (movie_id, popularity, vote_average, date) 
             VALUES 
             (%s, %s, %s, %s) ON CONFLICT (movie_id, date) DO NOTHING"""
 
-    movie_popularity_data = (movie_id, popularity, vote_average, datetime.date.today())
+    movie_popularity_data = [
+        (popularity.movie_id, popularity.popularity, popularity.vote_average, datetime.date.today()) for popularity in
+        popularity_data]
 
-    cursor.execute(sql, movie_popularity_data)
+    cursor.executemany(sql, movie_popularity_data)
     conn.commit()
 
 
@@ -68,27 +87,23 @@ def insert_movie_change(movie_id: int, datapoint: str, count: int):
     conn.commit()
 
 
-def insert_genre(genre: Genre):
+def insert_genre(genres: List[Genre]):
     sql = """INSERT INTO genres 
             (id, name) 
             VALUES 
             (%s, %s) ON CONFLICT (id) DO NOTHING"""
 
-    genre_data = (genre.id, genre.name)
-
-    cursor.execute(sql, genre_data)
+    cursor.executemany(sql, genres)
     conn.commit()
 
 
-def insert_movie_genres(movie_id: int, genre_id: int):
+def insert_movie_genres(movie_genres: List[Tuple[int, int]]):
     sql = """INSERT INTO moviegenres 
             (movie_id, genre_id) 
             VALUES 
             (%s, %s) ON CONFLICT (movie_id, genre_id) DO NOTHING"""
 
-    movie_genre_data = (movie_id, genre_id)
-
-    cursor.execute(sql, movie_genre_data)
+    cursor.execute(sql, movie_genres)
     conn.commit()
 
 
