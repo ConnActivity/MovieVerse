@@ -43,11 +43,10 @@ def get_now_playing_movies(page=1):
     movies = tmdb.movies().now_playing(page=page)
     return movies
 
-
-def get_popular_people():
-    people = tmdb.people().popular()
+# Literally worse than the library functions. Why do these functions even exist? Isn't there a way to construct the TMDb object and call functions on it?
+def get_popular_people(page=1):
+    people = tmdb.people().popular(page=page)
     return people
-
 
 def get_person_details(person_id):
     person = tmdb.person(person_id)
