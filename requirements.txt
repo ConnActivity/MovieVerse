@@ -7,3 +7,5 @@ gensim
 nltk
 wordcloud
 scikit-learn
+keras
+tensorflow
