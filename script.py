@@ -19,7 +19,7 @@ for i in range(1, PAGES + 1):
         all_movie_ids.add(movie.id)
     for changes in downloader.get_changes_for_all_movies(i):
         all_movie_ids.add(changes["id"])
-        all_changes.append(changes)
+        all_changes.append(changes)        
     print(f"Page {i} of {PAGES} finished")
 
 end_time = time.time()
