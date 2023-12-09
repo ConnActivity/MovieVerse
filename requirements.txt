@@ -9,3 +9,4 @@ wordcloud
 scikit-learn
 keras
 tensorflow
+gradio
