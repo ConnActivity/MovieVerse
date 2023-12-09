@@ -41,7 +41,7 @@ FROM movies
 """
 movie_titles = query_db(sql_query, conn)
 
-# Corpus with example sentences
+# All movie titles
 corpus = movie_titles['title']
 
 if load_embeddings:
@@ -49,10 +49,9 @@ if load_embeddings:
     with open(embeddings_file, 'rb') as file:
         corpus_embeddings = pickle.load(file)
 else:
-    # Calculate embeddings
+    # Calculate embeddings otherwise
     corpus_embeddings = embedder.encode(corpus)
 
-    # Save embeddings to file
     with open(embeddings_file, 'wb') as file:
         pickle.dump(corpus_embeddings, file)
 
@@ -61,18 +60,19 @@ def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
     # Indices of the top n similar movies
     distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
 
+    # Sort results
     results = zip(range(len(distances)), distances)
     results = sorted(results, key=lambda x: x[1])
 
-    # Queried movie(s)
+    # Queried movie id
     query_id = results[0:1][0][0]
 
-    # Correctly extract top_n_indices and additional_indices
+    # Extract indices
     top_n_indices = [idx for idx, _ in results[1:top_n + 1]]
     additional_indices = [idx for idx, _ in results[top_n + 1:top_n + additional_k + 1]]
 
     # Combine indices and extract corresponding embeddings
-    combined_indices = np.concatenate(([query_id], top_n_indices, additional_indices))  # 0 is for the queried movie
+    combined_indices = np.concatenate(([query_id], top_n_indices, additional_indices))
     combined_embeddings = np.vstack((query_embedding, corpus_embeddings[combined_indices]))
 
     # Reduce dimensions
@@ -131,11 +131,13 @@ def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
 
 
 def find_similar_movies(movie_title, top_n, additional_k):
-    # Process entered movie title
+    # Embed the query
     query_embedding = embedder.encode(movie_title)
 
+    # Calculate cosine distances
     distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
 
+    # Sort results
     results = zip(range(len(distances)), distances)
     results = sorted(results, key=lambda x: x[1])
 
@@ -145,7 +147,7 @@ def find_similar_movies(movie_title, top_n, additional_k):
     # Create a dictionary for the top n movies with their cosine distances
     similar_movies_dict = {corpus[idx]: 1 - distance for idx, distance in results[start_index:top_n + start_index]}
 
-    # Prepare 3D plot
+    # 3D plot
     fig = reduce_dimensions_and_plot(query_embedding, top_n, additional_k)
 
     # Return dictionary of similar movies and the plot
@@ -153,6 +155,7 @@ def find_similar_movies(movie_title, top_n, additional_k):
 
 
 # Begin Interface
+
 # Get the total number of movies
 total_movies = len(movie_titles)
 total_movies_display = f" ## Total number of movies in the database: {total_movies}"
