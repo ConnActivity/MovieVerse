@@ -40,6 +40,11 @@ class MovieSpokenLanguage(NamedTuple):
 
 
 conn = psycopg2.connect(url)
+class PersonPopularity(NamedTuple):
+    person_id: int
+    popularity: float
+
+
 cursor = conn.cursor()
 
 
@@ -194,28 +199,29 @@ def insert_movie_spoken_languages(languages: List[MovieSpokenLanguage]):
     conn.commit()
 
 
-def insert_person(person: Person):
+def insert_person(persons: List[Person]):
     sql = """INSERT INTO people 
             (id, name, gender, known_for_department, profile_path, adult)
             VALUES 
             (%s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING"""
 
-    person_data = (
-        person.id, person.name, person.gender, person.known_for_department, person.profile_path, person.adult)
+    person_data = [(
+        person.id, person.name, person.gender, person.known_for_department, person.profile_path, person.adult) for
+        person in persons]
 
     cursor.execute(sql, person_data)
     conn.commit()
 
 
-def insert_person_popularity(person_id: int, popularity: float):
+def insert_person_popularity(popularity: List[PersonPopularity]):
     sql = """INSERT INTO people_popularity 
             (person_id, popularity, date) 
             VALUES 
             (%s, %s, %s) ON CONFLICT (person_id, date) DO NOTHING"""
 
-    person_popularity_data = (person_id, popularity, datetime.date.today())
+    popularity_data = [(person.person_id, person.popularity, datetime.date.today()) for person in popularity]
 
-    cursor.execute(sql, person_popularity_data)
+    cursor.execute(sql, popularity_data)
     conn.commit()
 
 
