@@ -1,44 +1,44 @@
 CREATE TABLE Movies (
     id INT PRIMARY KEY,
-    title VARCHAR(255),
-    original_title VARCHAR(255),
+    title TEXT,
+    original_title TEXT,
     imdb_id VARCHAR(20),
     overview TEXT,
-    tagline VARCHAR(255),
+    tagline TEXT,
     release_date DATE,
     runtime INT,
     budget DECIMAL(15, 2),
     revenue DECIMAL(15, 2),
     adult BOOLEAN,
     video BOOLEAN,
-    backdrop_path VARCHAR(255),
-    poster_path VARCHAR(255),
-    homepage VARCHAR(255),
+    backdrop_path TEXT,
+    poster_path TEXT,
+    homepage TEXT,
     status VARCHAR(50),
     original_language VARCHAR(10)
 );
 
 CREATE TABLE Genres (
     id INT PRIMARY KEY,
-    name VARCHAR(50)
+    name TEXT
 );
 
 CREATE TABLE ProductionCompanies (
     id INT PRIMARY KEY,
-    name VARCHAR(255),
-    logo_path VARCHAR(255),
+    name TEXT,
+    logo_path TEXT,
     origin_country VARCHAR(5)
 );
 
 CREATE TABLE ProductionCountries (
     iso_3166_1 VARCHAR(5) PRIMARY KEY,
-    name VARCHAR(255)
+    name TEXT
 );
 
 CREATE TABLE SpokenLanguages (
     iso_639_1 VARCHAR(5) PRIMARY KEY,
-    name VARCHAR(255),
-    english_name VARCHAR(255)
+    name TEXT,
+    english_name TEXT
 );
 
 CREATE TABLE MovieGenres (
@@ -75,7 +75,7 @@ CREATE TABLE MovieSpokenLanguages (
 CREATE TABLE Changes (
     movie_id INT,
     datetime date,
-    datapoint VARCHAR(255),
+    datapoint TEXT,
     PRIMARY KEY (movie_id, datetime, datapoint),
     FOREIGN KEY (movie_id) REFERENCES Movies(id),
     count INT
@@ -83,10 +83,10 @@ CREATE TABLE Changes (
 
 CREATE TABLE people (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
+    name TEXT,
     gender INTEGER,
-    known_for_department VARCHAR(50),
-    profile_path VARCHAR(255),
+    known_for_department TEXT,
+    profile_path TEXT,
     adult BOOLEAN
 );
 
@@ -94,13 +94,13 @@ CREATE TABLE known_works (
     id SERIAL PRIMARY KEY,
     person_id INTEGER REFERENCES people(id),
     adult BOOLEAN,
-    backdrop_path VARCHAR(255),
-    title VARCHAR(100),
+    backdrop_path TEXT,
+    title TEXT,
     original_language VARCHAR(10),
-    original_title VARCHAR(100),
+    original_title TEXT,
     overview TEXT,
-    poster_path VARCHAR(255),
-    media_type VARCHAR(50),
+    poster_path TEXT,
+    media_type TEXT,
     popularity NUMERIC(10,3),
     release_date DATE,
     video BOOLEAN,
