@@ -130,3 +130,25 @@ def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
     return fig
 
 
+def find_similar_movies(movie_title, top_n, additional_k):
+    # Process entered movie title
+    query_embedding = embedder.encode(movie_title)
+
+    distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
+
+    results = zip(range(len(distances)), distances)
+    results = sorted(results, key=lambda x: x[1])
+
+    # Check if the top result is the queried movie itself and adjust the range accordingly
+    start_index = 0 if corpus[results[0][0]] != movie_title else 1
+
+    # Create a dictionary for the top n movies with their cosine distances
+    similar_movies_dict = {corpus[idx]: 1 - distance for idx, distance in results[start_index:top_n + start_index]}
+
+    # Prepare 3D plot
+    fig = reduce_dimensions_and_plot(query_embedding, top_n, additional_k)
+
+    # Return dictionary of similar movies and the plot
+    return similar_movies_dict, fig
+
+
