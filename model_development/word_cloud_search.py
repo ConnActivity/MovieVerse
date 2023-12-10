@@ -11,11 +11,12 @@ import plotly.graph_objs as go
 import pickle
 
 # Initialize pre-trained BERT model
-embedder = SentenceTransformer('bert-base-nli-mean-tokens')
+embedder = SentenceTransformer('bert-base-nli-mean-tokens', device='cuda')
 
 # Load embeddings from file or calculate them (takes a while)
 load_embeddings = True
 embeddings_file = 'corpus_embeddings.pkl'
+dataframe_file = 'movie_titles.pkl'
 
 # Database connection parameters
 db_params = {
@@ -34,26 +35,33 @@ def query_db(sql_query, conn):
     return pd.read_sql_query(sql_query, conn)
 
 
-# Select all movie titles
-sql_query = """
-SELECT title
-FROM movies
-"""
-movie_titles = query_db(sql_query, conn)
-
-# All movie titles
-corpus = movie_titles['title']
-
 if load_embeddings:
     # Load embeddings from file
     with open(embeddings_file, 'rb') as file:
         corpus_embeddings = pickle.load(file)
+
+    with open(dataframe_file, 'rb') as file:
+        movie_titles = pickle.load(file)
+
+    corpus = movie_titles['title']
 else:
+    # Select all movie titles
+    sql_query = """
+    SELECT title
+    FROM movies
+    """
+    movie_titles = query_db(sql_query, conn)
+
+    # All movie titles
+    corpus = movie_titles['title']
     # Calculate embeddings otherwise
     corpus_embeddings = embedder.encode(corpus)
 
     with open(embeddings_file, 'wb') as file:
         pickle.dump(corpus_embeddings, file)
+
+    with open(dataframe_file, 'wb') as file:
+        pickle.dump(movie_titles, file)
 
 
 def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
