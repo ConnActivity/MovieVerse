@@ -50,8 +50,13 @@ else:
     sql_query = """
     SELECT title
     FROM movies
+    WHERE title IS NOT NULL AND budget > 0 AND revenue > 0 AND runtime >= 20
     """
+
     movie_titles = query_db(sql_query, conn)
+
+    # Print how many movies are in the database
+    print(f"There are {len(movie_titles)} movies in the database.")
 
     # All movie titles
     corpus = movie_titles['title']
@@ -66,7 +71,7 @@ else:
         pickle.dump(movie_titles, file)
 
 
-def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
+def reduce_dimensions_and_plot(query_embedding, top_n, additional_k, query_title):
     # Indices of the top n similar movies
     distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
 
@@ -74,15 +79,12 @@ def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
     results = zip(range(len(distances)), distances)
     results = sorted(results, key=lambda x: x[1])
 
-    # Queried movie id
-    query_id = results[0:1][0][0]
-
     # Extract indices
     top_n_indices = [idx for idx, _ in results[1:top_n + 1]]
     additional_indices = [idx for idx, _ in results[top_n + 1:top_n + additional_k + 1]]
 
     # Combine indices and extract corresponding embeddings
-    combined_indices = np.concatenate(([query_id], top_n_indices, additional_indices))
+    combined_indices = np.concatenate(([0], top_n_indices, additional_indices))
     combined_embeddings = np.vstack((query_embedding, corpus_embeddings[combined_indices]))
 
     # Reduce dimensions
@@ -100,7 +102,7 @@ def reduce_dimensions_and_plot(query_embedding, top_n, additional_k):
         mode='markers+text',
         marker=dict(size=10, color='purple'),
         name='Queried Movie',
-        text=[titles[0]],
+        text=[query_title],
         textposition='top center'
     )
 
@@ -158,7 +160,7 @@ def find_similar_movies(movie_title, top_n, additional_k):
     similar_movies_dict = {corpus[idx]: 1 - distance for idx, distance in results[start_index:top_n + start_index]}
 
     # 3D plot
-    fig = reduce_dimensions_and_plot(query_embedding, top_n, additional_k)
+    fig = reduce_dimensions_and_plot(query_embedding, top_n, additional_k, movie_title)
 
     # Return dictionary of similar movies and the plot
     return similar_movies_dict, fig
