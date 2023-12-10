@@ -61,7 +61,7 @@ else:
     # All movie titles
     corpus = movie_titles['title']
     # Calculate embeddings otherwise
-    corpus_embeddings = embedder.encode(corpus)
+    corpus_embeddings = embedder.encode(corpus, show_progress_bar=True)
 
     # Save embeddings and movie titles
     with open(embeddings_file, 'wb') as file:
