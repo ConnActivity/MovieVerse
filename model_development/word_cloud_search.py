@@ -170,13 +170,13 @@ def find_similar_movies(movie_title, top_n, additional_k):
 
 # Get the total number of movies
 total_movies = len(movie_titles)
-total_movies_display = f" ## Total number of movies in the database: {total_movies}"
 
 # Short description of the application
 description = """
-## Description
+f## Description
 This application allows you to find movies similar to a given title using BERT embeddings and TSNE for visualization.
 Just enter a movie title, select the number of similar movies you want to see, and the application will display a list of similar movies along with a 3D plot.
+Total number of movies in the database: {total_movies
 
 ## Selection of movies
 The movies are selected from the database based on the following criteria:
@@ -188,7 +188,6 @@ The movies are selected from the database based on the following criteria:
 
 with gr.Blocks() as iface:
     gr.Markdown("# Movie Similarity Search")
-    gr.Markdown(total_movies_display)
     gr.Markdown(description)
 
     with gr.Row():
