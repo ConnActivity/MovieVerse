@@ -177,6 +177,13 @@ description = """
 ## Description
 This application allows you to find movies similar to a given title using BERT embeddings and TSNE for visualization.
 Just enter a movie title, select the number of similar movies you want to see, and the application will display a list of similar movies along with a 3D plot.
+
+## Selection of movies
+The movies are selected from the database based on the following criteria:
+- The movie title is not null
+- The movie has a budget > 0
+- The movie has a revenue > 0
+- The movie has a runtime >= 20 minutes
 """
 
 with gr.Blocks() as iface:
