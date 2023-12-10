@@ -40,6 +40,7 @@ if load_embeddings:
     with open(embeddings_file, 'rb') as file:
         corpus_embeddings = pickle.load(file)
 
+    # Load movies
     with open(dataframe_file, 'rb') as file:
         movie_titles = pickle.load(file)
 
@@ -57,6 +58,7 @@ else:
     # Calculate embeddings otherwise
     corpus_embeddings = embedder.encode(corpus)
 
+    # Save embeddings and movie titles
     with open(embeddings_file, 'wb') as file:
         pickle.dump(corpus_embeddings, file)
 
