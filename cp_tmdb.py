@@ -53,9 +53,9 @@ def one_pickle(directory: str):
         print(movie)
 
 
-def load_and_insert_pickle(directory: str):
+def load_and_insert_pickle(all_movies_path: str):
     start_time = time.time()
-    with open(directory + '/all_movies.pkl', 'rb') as f:
+    with open(all_movies_path, 'rb') as f:
         movies = pickle.load(f)
     end_time = time.time()
     print(f"Loading {len(movies)} movies took {end_time - start_time} seconds to complete")
@@ -66,11 +66,10 @@ def load_and_insert_pickle(directory: str):
 
 
 if __name__ == '__main__':
-    #download_all_movie_details()
-    #time_start = time.time()
-    #insert_movie_details(ROOT_PATH + "/all_movies_tbdm")
-    #time_end = time.time()
-    #print(f"Inserting movies took {time_end - time_start} seconds to complete")
-    #one_pickle(ROOT_PATH + "/all_movies_tmdb")
-    # File must be named all_movies.pkl
-    load_and_insert_pickle(ROOT_PATH)
+    # download_all_movie_details()
+    # time_start = time.time()
+    # insert_movie_details(ROOT_PATH + "/all_movies_tbdm")
+    # time_end = time.time()
+    # print(f"Inserting movies took {time_end - time_start} seconds to complete")
+    # one_pickle(ROOT_PATH + "/all_movies_tmdb")
+    load_and_insert_pickle("path to all_movies.pkl")
