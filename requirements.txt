@@ -1,15 +1,26 @@
+# Database
 themoviedb==0.4.0
 psycopg2-binary==2.9.9
+
+# Data Analysis
 plotly
 seaborn
 matplotlib
 gensim
 nltk
 wordcloud
+jupyter
+
+# Machine Learning
 scikit-learn
 keras
-shap
 tensorflow
 torch
+
+# XAI
+shap
+sentence-transformers
+
+# Web UI
 gradio
-jupyter
+
