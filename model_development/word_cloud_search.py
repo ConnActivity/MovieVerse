@@ -4,14 +4,17 @@ import scipy.spatial
 import numpy as np
 import psycopg2
 import pandas as pd
+import torch
 from sentence_transformers import SentenceTransformer
 import scipy.spatial
 from sklearn.manifold import TSNE
 import plotly.graph_objs as go
 import pickle
 
+print("Loading BERT model...")
+print('Using CUDA' if torch.cuda.is_available() else 'Using MPS')
 # Initialize pre-trained BERT model
-embedder = SentenceTransformer('bert-base-nli-mean-tokens', device='cuda')
+embedder = SentenceTransformer('bert-base-nli-mean-tokens', device='cuda' if torch.cuda.is_available() else 'mps')
 
 # Load embeddings from file or calculate them (takes a while)
 load_embeddings = True
