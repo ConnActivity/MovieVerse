@@ -8,6 +8,7 @@ nltk
 wordcloud
 scikit-learn
 keras
+shap
 tensorflow
 torch
 gradio
