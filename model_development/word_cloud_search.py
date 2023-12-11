@@ -201,7 +201,7 @@ with gr.Blocks() as iface:
 
     with gr.Row():
         similar_movies = gr.Label(label="Similar Movies", min_width=300)
-        visualization_plot = gr.Plot(label="Visualization Plot", min_width=1000)
+        visualization_plot = gr.Plot(label="Visualization Plot", min_width=800)
 
     submit_btn.click(find_similar_movies, inputs=[movie_title, num_similar, num_additional], outputs=[similar_movies, visualization_plot])
 
