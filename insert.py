@@ -89,7 +89,7 @@ def insert_movie_popularity(popularity_data: List[MoviePopularity]):
             (%s, %s, %s, %s) ON CONFLICT (movie_id, date) DO NOTHING"""
 
     movie_popularity_data = [
-        (popularity.movie_id, popularity.popularity, popularity.vote_average, datetime.date.today()) for popularity in
+        (popularity.movie_id, popularity.popularity, popularity.vote_average, datetime.date.today() - datetime.timedelta(days=1)) for popularity in
         popularity_data]
 
     cursor.executemany(sql, movie_popularity_data)
