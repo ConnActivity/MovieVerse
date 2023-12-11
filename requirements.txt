@@ -9,4 +9,6 @@ wordcloud
 scikit-learn
 keras
 tensorflow
+torch
 gradio
+jupyter
