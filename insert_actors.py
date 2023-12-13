@@ -47,14 +47,7 @@ print(f"Inserting actors took {end_time - start_time} seconds to complete")
 
 start_time = time.time()
 print("Inserting popularity into database")
-for i, popularity in enumerate(all_people_popularity):
-    try:
-        insert.insert_person_popularity(person_id=popularity.id, popularity=popularity.popularity)
-    except Exception as e:
-        print(f"Could not insert popularity with id {popularity.id}")
-        print(e)
-    if i % 25 == 0:
-        print(f"{i} of {len(all_people_popularity)} inserted into database")
+insert.insert_person_popularity(people_popularity)
 
 end_time = time.time()
 print(f"Inserting popularity took {end_time - start_time} seconds to complete")
