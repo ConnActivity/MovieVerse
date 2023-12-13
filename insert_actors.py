@@ -39,14 +39,7 @@ print(f"Downloading details took {end_time - start_time} seconds to complete")
 
 start_time = time.time()
 print("Inserting actors into database")
-for i, actor in enumerate(all_actors):
-    try:
-        insert.insert_person(actor)
-    except Exception as e:
-        print(f"Could not insert actor with id {actor.id}")
-        print(e)
-    if i % 25 == 0:
-        print(f"{i} of {len(all_actors)} inserted into database")
+insert.insert_person(all_actors)
 
 end_time = time.time()
 print(f"Inserting actors took {end_time - start_time} seconds to complete")
