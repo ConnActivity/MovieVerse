@@ -47,6 +47,7 @@ print(f"Inserting actors took {end_time - start_time} seconds to complete")
 
 start_time = time.time()
 print("Inserting popularity into database")
+people_popularity = [PersonPopularity(person.id, person.popularity) for person in all_people_popularity]
 insert.insert_person_popularity(people_popularity)
 
 end_time = time.time()
