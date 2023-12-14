@@ -19,7 +19,7 @@ for i in range(1, PAGES + 1):
         all_movie_ids.add(movie.id)
     for changes in downloader.get_changes_for_all_movies(i):
         all_movie_ids.add(changes["id"])
-        all_changes.append(changes)
+        all_changes.append(changes)        
     print(f"Page {i} of {PAGES} finished")
 
 end_time = time.time()
@@ -43,14 +43,7 @@ print(f"Downloading details took {end_time - start_time} seconds to complete")
 
 start_time = time.time()
 print("Inserting movies into database")
-for i, movie in enumerate(all_movies):
-    try:
-        insert.insert_movie(movie)
-    except Exception as e:
-        print(f"Could not insert movie with id {movie.id}")
-        print(e)
-    if i % 25 == 0:
-        print(f"{i} of {len(all_movies)} inserted into database")
+insert.insert_movie(all_movies)
 
 end_time = time.time()
 print(f"Inserting movies took {end_time - start_time} seconds to complete")
