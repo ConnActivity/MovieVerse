@@ -17,7 +17,7 @@ print('Using CUDA' if torch.cuda.is_available() else 'Using MPS')
 embedder = SentenceTransformer('bert-base-nli-mean-tokens', device='cuda' if torch.cuda.is_available() else 'mps')
 
 # Load embeddings from file or calculate them (takes a while)
-load_embeddings = True
+load_embeddings = False
 embeddings_file = 'corpus_embeddings.pkl'
 dataframe_file = 'movie_titles.pkl'
 
@@ -53,9 +53,9 @@ else:
     sql_query = """
     SELECT title
     FROM movies
-    WHERE title IS NOT NULL AND budget > 0 AND revenue > 0 AND runtime >= 20
+    
     """
-
+# WHERE title IS NOT NULL AND budget > 0 AND revenue > 0 AND runtime >= 20
     movie_titles = query_db(sql_query, conn)
 
     # Print how many movies are in the database
@@ -175,13 +175,12 @@ def find_similar_movies(movie_title, top_n, additional_k):
 total_movies = len(movie_titles)
 
 # Short description of the application
-description = """
-f## Description
+description = f"""
+## Description
 This application allows you to find movies similar to a given title using BERT embeddings and TSNE for visualization.
 Just enter a movie title, select the number of similar movies you want to see, and the application will display a list of similar movies along with a 3D plot.
-Total number of movies in the database: {total_movies
 
-## Selection of movies
+## Selection of movies: {total_movies} films
 The movies are selected from the database based on the following criteria:
 - The movie title is not null
 - The movie has a budget > 0
